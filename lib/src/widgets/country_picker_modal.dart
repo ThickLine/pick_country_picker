@@ -12,7 +12,7 @@ class CountryPickerModal extends StatefulWidget {
   final Function(Country) onCountryChanged;
 
   /// ISO 3166-1 alpha-2 country code of the initially selected country. Highlighted and shown at the top if provided.
-  final String? selectedCountryCode;
+  final String? selectedCountry;
 
   /// Title for the picker modal. Defaults to 'Select Country'.
   final String title;
@@ -56,7 +56,7 @@ class CountryPickerModal extends StatefulWidget {
   const CountryPickerModal({
     Key? key,
     required this.onCountryChanged,
-    this.selectedCountryCode,
+    this.selectedCountry,
     this.title = 'Select Country',
     this.priorityCountryCodes,
     this.searchField,
@@ -114,9 +114,9 @@ class _CountryPickerModalState extends State<CountryPickerModal> {
     }
 
     // Preselect a country if specified.
-    if (widget.selectedCountryCode != null) {
+    if (widget.selectedCountry != null) {
       int selectedIndex = countries.indexWhere(
-          (country) => country.iso2Code == widget.selectedCountryCode);
+          (country) => country.countryCode == widget.selectedCountry);
       if (selectedIndex != -1) {
         Country selectedCountry = countries[selectedIndex];
         countries.removeAt(selectedIndex);
@@ -181,7 +181,7 @@ class _CountryPickerModalState extends State<CountryPickerModal> {
                 itemBuilder: (context, index) {
                   var country = filteredCountries[index];
                   bool isSelected =
-                      country.iso2Code == widget.selectedCountryCode;
+                      country.iso2Code == widget.selectedCountry;
 
                   return widget.countryListItemBuilder?.call(country) ??
                       _defaultCountryListItem(country, isSelected);
@@ -224,7 +224,7 @@ class _CountryPickerModalState extends State<CountryPickerModal> {
                 itemBuilder: (context, index) {
                   var country = filteredCountries[index];
                   bool isSelected =
-                      country.iso2Code == widget.selectedCountryCode;
+                      country.iso2Code == widget.selectedCountry;
 
                   return widget.countryListItemBuilder?.call(country) ??
                       _defaultCountryListItem(country, isSelected);
