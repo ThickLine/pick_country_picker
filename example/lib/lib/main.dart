@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
         child: CountryPickerModal(
           hideCloseIcon: false,
           hideSearch: false,
-          selectedCountry: selectedCountryCode,
+          selectedCountryIdentifier: selectedCountryCode,
           title: 'Select your country',
           priorityCountryCodes: ['US', 'GB', 'CN'],
           useCupertinoModal: false,

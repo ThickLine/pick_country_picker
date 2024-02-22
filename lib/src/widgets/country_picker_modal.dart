@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pick_country_picker/src/models/country.dart';
 import '../data/country_codes.dart';
+import 'package:collection/collection.dart';
 
 /// A modal widget that allows the user to pick a country from a list.
 ///
@@ -12,7 +13,7 @@ class CountryPickerModal extends StatefulWidget {
   final Function(Country) onCountryChanged;
 
   /// ISO 3166-1 alpha-2 country code of the initially selected country. Highlighted and shown at the top if provided.
-  final String? selectedCountry;
+  final String? selectedCountryIdentifier;
 
   /// Title for the picker modal. Defaults to 'Select Country'.
   final String title;
@@ -56,7 +57,7 @@ class CountryPickerModal extends StatefulWidget {
   const CountryPickerModal({
     Key? key,
     required this.onCountryChanged,
-    this.selectedCountry,
+    this.selectedCountryIdentifier,
     this.title = 'Select Country',
     this.priorityCountryCodes,
     this.searchField,
@@ -79,6 +80,7 @@ class CountryPickerModal extends StatefulWidget {
 class _CountryPickerModalState extends State<CountryPickerModal> {
   List<Country> countries = [];
   List<Country> filteredCountries = [];
+  Country? selectedCountry;
 
   @override
   void initState() {
@@ -87,54 +89,64 @@ class _CountryPickerModalState extends State<CountryPickerModal> {
   }
 
   void _loadCountries() {
+    // Load all countries from JSON or another data source
     List<Country> allCountries =
         countryCodes.map((data) => Country.fromJson(data)).toList();
 
-    // If overrideCountryCodes is provided, filter countries to include only those.
-    List<Country> loadedCountries = widget.overrideCountryCodes != null
-        ? allCountries
-            .where((country) =>
-                widget.overrideCountryCodes!.contains(country.iso2Code))
-            .toList()
-        : allCountries;
+    // If there's a list of country codes to override the default list, filter the countries list
+    if (widget.overrideCountryCodes != null) {
+      allCountries = allCountries
+          .where((country) =>
+              widget.overrideCountryCodes!.contains(country.iso2Code))
+          .toList();
+    }
 
-    // Apply priority to certain countries if specified.
-    if (widget.priorityCountryCodes != null) {
-      final priorityCountries = loadedCountries
+    // Apply priority to certain countries if specified
+    if (widget.priorityCountryCodes != null &&
+        widget.priorityCountryCodes!.isNotEmpty) {
+      final List<Country> priorityCountries = allCountries
           .where((country) =>
               widget.priorityCountryCodes!.contains(country.iso2Code))
           .toList();
-      // Remove priority countries from the loaded list to avoid duplication.
-      loadedCountries.removeWhere(
-          (country) => widget.priorityCountryCodes!.contains(country.iso2Code));
-      // Add priority countries at the beginning of the list.
-      countries = priorityCountries + loadedCountries;
+      final List<Country> remainingCountries = allCountries
+          .where((country) =>
+              !widget.priorityCountryCodes!.contains(country.iso2Code))
+          .toList();
+      countries = priorityCountries + remainingCountries;
     } else {
-      countries = loadedCountries;
+      countries = allCountries;
     }
 
-    // Preselect a country if specified.
-    if (widget.selectedCountry != null) {
-      int selectedIndex = countries.indexWhere(
-          (country) => country.countryCode == widget.selectedCountry);
-      if (selectedIndex != -1) {
-        Country selectedCountry = countries[selectedIndex];
-        countries.removeAt(selectedIndex);
-        countries.insert(
-            0, selectedCountry); // Move the selected country to the top.
+    // Determine the selected country based on the identifier provided
+    if (widget.selectedCountryIdentifier != null) {
+      selectedCountry = countries.firstWhereOrNull(
+        (country) =>
+            country.countryCode == widget.selectedCountryIdentifier ||
+            country.iso2Code == widget.selectedCountryIdentifier,
+      );
+
+      // If a selected country is found, ensure it's at the top of the list
+      if (selectedCountry != null) {
+        countries.remove(
+            selectedCountry); // Remove the selected country from its current position
+        countries.insert(0, selectedCountry!); // Insert it at the top
       }
     }
 
-    filteredCountries = List<Country>.from(
-        countries); // Initialize the filtered list with all countries.
-    setState(() {});
+    filteredCountries =
+        List<Country>.from(countries); // Initialize the filteredCountries list
+    setState(() {}); // Refresh the widget to reflect changes
   }
+
 
   void _filterCountries(String query) {
     setState(() {
       filteredCountries = countries
           .where((country) =>
-              country.countryName.toLowerCase().contains(query.toLowerCase()))
+              country.countryName
+                  ?.toLowerCase()
+                  .contains(query.toLowerCase()) ??
+              false)
           .toList();
     });
   }
@@ -180,8 +192,7 @@ class _CountryPickerModalState extends State<CountryPickerModal> {
                 itemCount: filteredCountries.length,
                 itemBuilder: (context, index) {
                   var country = filteredCountries[index];
-                  bool isSelected =
-                      country.iso2Code == widget.selectedCountry;
+                  bool isSelected = country == selectedCountry;
 
                   return widget.countryListItemBuilder?.call(country) ??
                       _defaultCountryListItem(country, isSelected);
@@ -223,8 +234,8 @@ class _CountryPickerModalState extends State<CountryPickerModal> {
                 itemCount: filteredCountries.length,
                 itemBuilder: (context, index) {
                   var country = filteredCountries[index];
-                  bool isSelected =
-                      country.iso2Code == widget.selectedCountry;
+                  bool isSelected = country == selectedCountry;
+
 
                   return widget.countryListItemBuilder?.call(country) ??
                       _defaultCountryListItem(country, isSelected);
