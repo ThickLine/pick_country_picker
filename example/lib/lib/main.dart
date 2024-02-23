@@ -33,28 +33,34 @@ class _HomePageState extends State<HomePage> {
           selectedCountryIdentifier: selectedCountryCode,
           title: 'Select your country',
           priorityCountryCodes: ['US', 'GB', 'CN'],
-          useCupertinoModal: false,
+          // overrideCountryCodes: ['LV', 'LT', 'EE'],
+          // useCupertinoModal: true,
+          // subtitleBuilder: (Country country) {
+          //   return country.countryName;
+          // },
           onCountryChanged: (Country country) {
             setState(() {
               selectedCountryCode = country.iso2Code;
             });
           },
-          countryDisplayBuilder: (Country country) {
-            // Return a custom string to display for each country
-            return '${country.countryName} - ${country.iso2Code}';
-          },
-          flagBuilder: (Country country) {
-            // Return a custom widget to display for each country flag
-            return CircleAvatar(
-              backgroundImage: AssetImage(
-                country.flagUri!,
-                package: 'pick_country_picker',
-              ),
-              onBackgroundImageError: (exception, stackTrace) =>
-                  Icon(Icons.flag),
-            );
-          },
-          selectedIcon: Icon(Icons.radio_button_checked, color: Colors.green),
+
+
+          // countryDisplayBuilder: (Country country) {
+          //   // Return a custom string to display for each country
+          //   return '${country.countryName}';
+          // },
+          // flagBuilder: (Country country) {
+          //   // Return a custom widget to display for each country flag
+          //   return CircleAvatar(
+          //     backgroundImage: AssetImage(
+          //       country.flagUri!,
+          //       package: 'pick_country_picker',
+          //     ),
+          //     onBackgroundImageError: (exception, stackTrace) =>
+          //         Icon(Icons.flag),
+          //   );
+          // },
+          // selectedIcon: Icon(Icons.check, color: Colors.green),
         ),
       ),
     );

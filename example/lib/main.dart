@@ -28,10 +28,12 @@ class _HomePageState extends State<HomePage> {
       builder: (_) => SizedBox(
         height: MediaQuery.of(context).size.height * 0.9,
         child: CountryPickerModal(
+          selectedCountryIdentifier: selectedCountry,
           onCountryChanged: (country) {
-            // Temporarily remove setState to diagnose the issue
             print('${country.countryName} (${country.iso2Code})');
-            Navigator.of(context).pop();
+            setState(() {
+              selectedCountry = country.countryName!;
+            });
           },
         ),
       ),
