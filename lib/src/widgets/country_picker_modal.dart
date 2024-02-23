@@ -118,6 +118,12 @@ class _CountryPickerModalState extends State<CountryPickerModal> {
   void initState() {
     super.initState();
     _initializeCountries();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Ensure countries are loaded and selectedCountry is set
+      if (_selectedCountry != null) {
+        widget.onCountryChanged(_selectedCountry!);
+      }
+    });
   }
 
   void _initializeCountries() {
