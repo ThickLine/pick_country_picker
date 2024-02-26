@@ -1,6 +1,6 @@
 name: pick_country_picker
 description: A highly customizable Flutter package for selecting a country from a modal list.
-version: 0.0.1
+version: 0.0.2
 homepage: pyrovex.xyz
 
 environment:
