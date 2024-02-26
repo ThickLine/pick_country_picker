@@ -53,8 +53,15 @@ class _HomePageState extends State<HomePage> {
             });
           },
 
+          borderBuilder: (Country country) {
+            if (country == selectedCountry) {
+              return Border();
+            }
+            return const Border(
+                bottom: BorderSide(color: Colors.grey, width: 0.5));
+          },
+
           countryDisplayBuilder: (Country country) {
-            // Return a custom string to display for each country
             return '${country.countryName}';
           },
           flagBuilder: (Country country) {

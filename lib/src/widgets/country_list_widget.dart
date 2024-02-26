@@ -9,6 +9,7 @@ class CountryListWidget extends StatelessWidget {
   final Widget? selectedIcon;
   final String Function(Country country)? countryDisplayBuilder;
   final String Function(Country country)? subtitleBuilder;
+  final Border Function(Country country)? borderBuilder;
 
   const CountryListWidget({
     Key? key,
@@ -19,6 +20,7 @@ class CountryListWidget extends StatelessWidget {
     this.selectedIcon,
     this.countryDisplayBuilder,
     this.subtitleBuilder,
+    this.borderBuilder,
   }) : super(key: key);
 
   @override
@@ -31,13 +33,8 @@ class CountryListWidget extends StatelessWidget {
             country.iso2Code == selectedCountry!.iso2Code;
 
         return Container(
-          decoration: const BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: Colors.grey,
-                width: 0.5,
-              ),
-            ),
+          decoration: BoxDecoration(
+            border: borderBuilder != null ? borderBuilder!(country) : null,
           ),
           child: ListTile(
             leading: flagBuilder != null
@@ -85,4 +82,3 @@ class CountryListWidget extends StatelessWidget {
     return Text('+${country.countryCode}');
   }
 }
-

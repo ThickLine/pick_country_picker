@@ -74,6 +74,11 @@ class CountryPickerModal extends StatefulWidget {
   /// Placeholder text for the search field.
   final String placeholderText;
 
+  /// A callback function that allows for customized border rendering for each country
+  /// item in the list. If provided, this function will be used to generate the border
+  /// for each ListTile.
+  final Border Function(Country country)? borderBuilder;
+
   const CountryPickerModal(
       {Key? key,
       required this.onCountryChanged,
@@ -93,7 +98,8 @@ class CountryPickerModal extends StatefulWidget {
       this.borderRadius,
       this.subtitleBuilder,
       this.cancelText = 'Cancel',
-      this.placeholderText = 'Search for a country'})
+      this.placeholderText = 'Search for a country',
+      this.borderBuilder})
       : super(key: key);
 
   @override
@@ -160,6 +166,7 @@ class _CountryPickerModalState extends State<CountryPickerModal> {
           widget.onCountryChanged(country);
           Navigator.of(context).pop();
         },
+        borderBuilder: widget.borderBuilder,
         flagBuilder: widget.flagBuilder,
         selectedIcon: widget.selectedIcon,
         countryDisplayBuilder: widget.countryDisplayBuilder,
