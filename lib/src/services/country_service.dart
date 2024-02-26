@@ -11,7 +11,7 @@ class CountryService {
   List<Country> filterAndSortCountries({
     List<String>? overrideCountryCodes,
     List<String>? priorityCountryCodes,
-    String? selectedCountryCode,
+    Country? selectedCountry,
   }) {
     var countries = List<Country>.from(allCountries);
 
@@ -31,9 +31,10 @@ class CountryService {
       countries = priorityCountries + otherCountries;
     }
 
-    if (selectedCountryCode != null) {
+    if (selectedCountry != null) {
       final selectedIndex = countries
-          .indexWhere((country) => country.iso2Code == selectedCountryCode);
+          .indexWhere(
+          (country) => country.iso2Code == selectedCountry.iso2Code);
       if (selectedIndex != -1) {
         final selectedCountry = countries.removeAt(selectedIndex);
         countries.insert(0, selectedCountry);
@@ -42,4 +43,5 @@ class CountryService {
 
     return countries;
   }
+
 }

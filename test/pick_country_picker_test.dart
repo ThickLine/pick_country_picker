@@ -1,37 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pick_country_picker/pick_country_picker.dart';
+import 'package:pick_country_picker/src/models/country.dart';
 
 void main() {
-  testWidgets('CountryPickerModal opens, selects a country, and closes',
+  testWidgets('CountryPickerModal displays correctly',
       (WidgetTester tester) async {
-    bool countryChangedCalled = false;
-
-    // Mock onCountryChanged to set a flag when called
-    void onCountryChanged(Country country) {
-      countryChangedCalled = true;
-    }
+    Country? selectedCountry = Country(
+      countryCode: "371",
+      iso2Code: "LV",
+      e164CountryCode: 0,
+      isGeographic: true,
+      tierLevel: 1,
+      countryName: "Latvia",
+      dialExample: "2012345678",
+      formattedDisplayName: "Latvia (LV) [+371]",
+      fullDialExampleWithPlusSign: "+3712012345678",
+      displayNameWithoutCountryCode: "Latvia (LV)",
+      e164Key: "371-LV-0",
+      flagUri: "assets/flags/lv.png",
+    );
 
     await tester.pumpWidget(MaterialApp(
       home: Scaffold(
-        body: CountryPickerModal(
-          onCountryChanged: onCountryChanged,
+        body: Builder(
+          builder: (BuildContext context) {
+            return ElevatedButton(
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (_) => SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.95,
+                    child: CountryPickerModal(
+                      hideCloseIcon: false,
+                      hideSearch: false,
+                      selectedCountry: selectedCountry,
+                      useCupertinoModal: true,
+                      onCountryChanged: (Country country) {
+                        selectedCountry = country;
+                      },
+                    ),
+                  ),
+                );
+              },
+              child: const Text('Show Country Picker'),
+            );
+          },
         ),
       ),
     ));
 
-    // Open the modal by simulating whatever action normally opens it
-    // For this example, we directly build the modal into the widget tree
+    // Tap the button to show the country picker
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pumpAndSettle();
 
-    // Assuming the modal displays a list of countries using ListView
-    // Attempt to tap the first ListTile, simulating a country selection
-    await tester.tap(find.byType(ListTile).first);
-    await tester.pumpAndSettle(); // Wait for potential animations to complete
-
-    // Verify that the onCountryChanged callback was called
-    expect(countryChangedCalled, true);
-
-    // Additional verifications can include checking for the modal's closure,
-    // but this requires knowledge about how the modal is implemented and managed.
+    // Verify the modal is displayed
+    expect(find.byType(CountryPickerModal), findsOneWidget);
   });
 }

@@ -1,20 +1,19 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pick_country_picker/pick_country_picker.dart';
 
 class CountryListWidget extends StatelessWidget {
-  final List<Country> countries;
+  final List<Country> availableCountries;
   final Country? selectedCountry;
   final Function(Country) onCountrySelected;
-  final Widget Function(Country)? flagBuilder;
+  final Widget Function(Country country)? flagBuilder;
   final Widget? selectedIcon;
-  final String Function(Country)? countryDisplayBuilder;
-  final String Function(Country)? subtitleBuilder;
+  final String Function(Country country)? countryDisplayBuilder;
+  final String Function(Country country)? subtitleBuilder;
 
   const CountryListWidget({
     Key? key,
-    required this.countries,
-    this.selectedCountry,
+    required this.availableCountries,
+    required this.selectedCountry,
     required this.onCountrySelected,
     this.flagBuilder,
     this.selectedIcon,
@@ -25,9 +24,9 @@ class CountryListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: countries.length,
+      itemCount: availableCountries.length,
       itemBuilder: (context, index) {
-        final country = countries[index];
+        final country = availableCountries[index];
         final isSelected = selectedCountry != null &&
             country.iso2Code == selectedCountry!.iso2Code;
 
@@ -35,35 +34,26 @@ class CountryListWidget extends StatelessWidget {
           decoration: const BoxDecoration(
             border: Border(
               bottom: BorderSide(
-                color: CupertinoColors.separator,
-                width: 0.0,
+                color: Colors.grey,
+                width: 0.5,
               ),
             ),
           ),
           child: ListTile(
             leading: flagBuilder != null
                 ? flagBuilder!(country)
-                : ClipRRect(
-                    borderRadius: BorderRadius.circular(4.0),
-                    child: Image.asset(
-                      country.flagUri!,
-                      width: 32.0,
-                      height: 20.0,
-                      fit: BoxFit.cover,
-                      package: 'pick_country_picker',
-                    ),
-                  ),
+                : defaultFlagWidget(country),
             title: Text(countryDisplayBuilder != null
                 ? countryDisplayBuilder!(country)
-                : "${country.countryName} (${country.iso2Code})"),
-            subtitle: Text(subtitleBuilder != null
-                ? subtitleBuilder!(country)
-                : '+${country.countryCode}'),
+                : defaultCountryDisplay(country)),
+            subtitle: subtitleBuilder != null
+                ? Text(subtitleBuilder!(country))
+                : defaultSubtitleWidget(country),
             trailing: isSelected
                 ? selectedIcon ??
                     const Icon(
-                      CupertinoIcons.check_mark_circled_solid,
-                      color: CupertinoColors.activeGreen,
+                      Icons.check_circle,
+                      color: Colors.green,
                     )
                 : null,
             onTap: () => onCountrySelected(country),
@@ -72,4 +62,27 @@ class CountryListWidget extends StatelessWidget {
       },
     );
   }
+
+  // Example default widget implementations
+  Widget defaultFlagWidget(Country country) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(4.0),
+      child: Image.asset(
+        country.flagUri!,
+        package: 'pick_country_picker',
+        width: 32.0,
+        height: 20.0,
+        fit: BoxFit.cover,
+      ),
+    );
+  }
+
+  String defaultCountryDisplay(Country country) {
+    return '${country.countryName} (${country.iso2Code})';
+  }
+
+  Widget defaultSubtitleWidget(Country country) {
+    return Text('+${country.countryCode}');
+  }
 }
+

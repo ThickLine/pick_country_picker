@@ -4,88 +4,80 @@ import 'package:pick_country_picker/pick_country_picker.dart';
 import 'package:pick_country_picker/src/services/country_service.dart';
 import 'package:pick_country_picker/src/widgets/country_list_widget.dart';
 import 'package:pick_country_picker/src/widgets/search_field_widget.dart';
-import 'package:collection/collection.dart';
+
 
 /// A modal widget that allows the user to pick a country from a list.
 ///
 /// Offers extensive customization options, including overriding the default country list,
 /// specifying priority countries, and using custom widgets for the search field, list items, and more.
 class CountryPickerModal extends StatefulWidget {
-  /// Invoked when a country is selected by the user. Passes the selected [Country] object.
+  /// Invoked when the user makes a final country selection.
+  /// Passes the newly selected [Country] object to the caller for further processing.
   final Function(Country) onCountryChanged;
 
-  /// Identifier (ISO 3166-1 alpha-2 code or country code) for pre-selecting a country in the picker.
-  /// If provided, the corresponding country will be highlighted and positioned at the top of the list.
-  final String? selectedCountryIdentifier;
+  /// An optional ISO 3166-1 alpha-2 code or country code to pre-select a country.
+  /// If provided, the specified country will be highlighted and placed at the top of the list.
+  final Country? selectedCountry;
 
-  /// Custom title for the country picker modal. Defaults to 'Select Country'.
-  /// Useful for localization or when a different modal title is desired.
+  /// Custom title for the modal. Useful for localization or when a different title is preferred
+  /// over the default 'Select Country'.
   final String title;
 
-  /// List of country ISO codes that should be given priority in the list.
-  /// Countries specified here will appear at the top of the list, making them more accessible to the user.
+  /// Country ISO codes for countries that should appear at the top of the list.
+  /// This improves the discoverability of frequently used or important countries.
   final List<String>? priorityCountryCodes;
 
-  /// List of country ISO codes to limit the countries shown in the picker.
-  /// Only countries with codes in this list will be available for selection, effectively overriding the default country list.
+  /// Country ISO codes to exclusively display in the picker.
+  /// Use this to restrict the selection to a specific set of countries, overriding the default list.
   final List<String>? overrideCountryCodes;
 
-  /// Controls the visibility of the search functionality within the picker.
-  /// If set to true, the search field will be hidden, limiting users to scrolling through the country list.
+  /// Controls whether to display the search field. If true, users can only scroll to find countries.
   final bool hideSearch;
 
-  /// Determines whether the close icon or back button is visible in the modal.
-  /// Useful for custom navigation flows where the default back behavior is not desired.
+  /// Controls the visibility of the close or back button.
+  /// Useful when integrating the picker into custom navigation flows.
   final bool hideCloseIcon;
 
-  /// Switches the modal design between Cupertino and Material styles.
-  /// Set to true for Cupertino (iOS) style, or false for Material (Android) style.
+  /// Switches between Cupertino (iOS) and Material (Android) styles for the modal.
   final bool useCupertinoModal;
 
-  /// Custom widget for the search field, allowing for full customization of its appearance and functionality.
-  /// If not provided, a default search field is used.
+  /// Provides a completely custom search field widget.
+  /// Use this to tailor the search field's appearance and behavior.
   final Widget? searchField;
 
   /// Custom widget for the back or close button in the modal's app bar.
   /// Provides a way to customize the appearance or behavior of the back navigation.
   final Widget? backButton;
 
-  /// Builder function for customizing the appearance and layout of each country item in the list.
-  /// Enables complete control over how each country is displayed, including the flag, name, and selection indicator.
+  /// Builder function for creating a custom country list item.
+  /// Enables complete control over how each country is displayed.
   final Widget Function(Country)? countryListItemBuilder;
 
-  /// Builder function for creating custom subtitle text for each country list item.
-  /// Allows for additional information to be displayed under the country name.
+  /// Builder function for creating custom subtitle text under each country name.
   final String Function(Country)? subtitleBuilder;
 
   /// Custom widget to indicate the selected country in the list.
-  /// Overrides the default selection indicator, providing flexibility in how selection is highlighted.
   final Widget? selectedIcon;
 
-  /// Builder function to customize the display text for each country, overriding the default display.
-  /// Useful for custom formatting of country names.
+  /// Builder function to customize the display text for each country.
   final String Function(Country)? countryDisplayBuilder;
 
-  /// Builder function to create a custom flag widget for each country, overriding the default flag display.
-  /// Offers the ability to use custom images or styles for country flags.
+  /// Builder function to create a custom flag widget for each country.
   final Widget Function(Country)? flagBuilder;
 
-  /// Custom border radius for the modal, applicable to Cupertino style modals.
-  /// Allows for rounded corners, enhancing the modal's visual integration with the rest of the UI.
+  /// Custom border radius for the modal (Cupertino style only).
   final BorderRadiusGeometry? borderRadius;
 
-  /// Custom text for the cancel button, applicable in Cupertino style modals.
-  /// Allows for localization or customization of the button text.
+  /// Custom text for the cancel button (Cupertino style only).
   final String cancelText;
 
-  /// Placeholder text for the search field, providing guidance on what users can search for.
-  /// Defaults to 'Search for a country', but can be customized for localization or clarity.
+  /// Placeholder text for the search field.
   final String placeholderText;
 
   const CountryPickerModal(
       {Key? key,
       required this.onCountryChanged,
-      this.selectedCountryIdentifier,
+      this.selectedCountry,
       this.title = 'Select Country',
       this.priorityCountryCodes,
       this.overrideCountryCodes,
@@ -113,35 +105,43 @@ class _CountryPickerModalState extends State<CountryPickerModal> {
   List<Country> _countries = [];
   List<Country> _filteredCountries = [];
   Country? _selectedCountry;
+  Country? initialCountry;
 
   @override
   void initState() {
     super.initState();
     _initializeCountries();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Ensure countries are loaded and selectedCountry is set
-      if (_selectedCountry != null) {
-        widget.onCountryChanged(_selectedCountry!);
-      }
-    });
   }
 
   void _initializeCountries() {
     final countryService = CountryService();
+    final pickCountryLookupService = PickCountryLookupService();
     _countries = countryService.filterAndSortCountries(
       overrideCountryCodes: widget.overrideCountryCodes,
       priorityCountryCodes: widget.priorityCountryCodes,
-      selectedCountryCode: widget.selectedCountryIdentifier,
+      selectedCountry: widget.selectedCountry,
     );
 
-    _selectedCountry = _countries.firstWhereOrNull(
-      (country) =>
-          country.iso2Code == widget.selectedCountryIdentifier ||
-          country.countryCode == widget.selectedCountryIdentifier,
-    );
+
 
     _filteredCountries = List<Country>.from(_countries);
+
+    if (widget.selectedCountry != null) {
+      initialCountry = pickCountryLookupService
+          .getCountryByIsoCode(widget.selectedCountry!.iso2Code);
+
+      if (initialCountry != null) {
+        setState(() {
+          _selectedCountry = initialCountry;
+        });
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          widget.onCountryChanged(_selectedCountry!);
+        });
+      }
+    }
   }
+
 
   void _filterCountries(String query) {
     setState(() {
@@ -154,7 +154,7 @@ class _CountryPickerModalState extends State<CountryPickerModal> {
 
   Widget _buildCountryPickerList() {
     return CountryListWidget(
-        countries: _filteredCountries,
+        availableCountries: _filteredCountries,
         selectedCountry: _selectedCountry,
         onCountrySelected: (Country country) {
           widget.onCountryChanged(country);

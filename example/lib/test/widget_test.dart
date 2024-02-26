@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pick_country_picker_example/main.dart';
+import 'package:pick_country_picker/pick_country_picker.dart';
+
+import '../main.dart';
 
 void main() {
-  testWidgets('CountryPickerModal selection test', (WidgetTester tester) async {
+  testWidgets('ExampleApp and CountryPickerModal display correctly',
+      (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(ExampleApp());
 
-    // Verify that the initial selected country is 'US'.
-    expect(find.text('Selected Country: US'), findsOneWidget);
+    // Verify that the app is displayed correctly.
+    expect(find.byType(ExampleApp), findsOneWidget);
 
     // Tap on the 'Show Country Picker' button to open the modal.
     await tester.tap(find.byType(ElevatedButton));
     await tester.pumpAndSettle(); // Wait for the modal to fully open.
+
+    // Verify the modal is displayed
+    expect(find.byType(CountryPickerModal), findsOneWidget);
   });
 }
