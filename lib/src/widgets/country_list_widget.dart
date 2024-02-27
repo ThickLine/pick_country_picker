@@ -45,7 +45,7 @@ class CountryListWidget extends StatelessWidget {
                 : defaultCountryDisplay(country)),
             subtitle: subtitleBuilder != null
                 ? Text(subtitleBuilder!(country) ?? '')
-                : SizedBox.shrink(),
+                : null,
             trailing: isSelected
                 ? selectedIcon ??
                     const Icon(

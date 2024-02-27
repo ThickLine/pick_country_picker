@@ -66,9 +66,9 @@ class _HomePageState extends State<HomePage> {
           countryDisplayBuilder: (Country country) {
             return '${country.countryName}';
           },
-          subtitleBuilder: (Country country) {
-            return '+${country.countryCode} (${country.iso2Code})';
-          },
+          // subtitleBuilder: (Country country) {
+          //   return '+${country.countryCode} (${country.iso2Code})';
+          // },
           flagBuilder: (Country country) {
             return Image.asset(
               country.flagUri!,
