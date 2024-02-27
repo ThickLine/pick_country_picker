@@ -100,15 +100,20 @@ CountryPickerModal(
 
 ## Example
 
+https://github.com/ThickLine/pick_country_picker/assets/31936990/22e7515c-8668-419e-8fbe-b8e002df9ec5
+
+
+
 ### With search:
+![Picker-with-search](https://github.com/ThickLine/pick_country_picker/assets/31936990/5271df95-7fef-42ff-87a5-d8c306c2b553)
 
 
 ### Without search:
+![Picker-without-search](https://github.com/ThickLine/pick_country_picker/assets/31936990/9434a95d-8841-4161-bcea-e432c228195f)
 
 
 ### Build your own:
-
-
+![Picker-build-your-own](https://github.com/ThickLine/pick_country_picker/assets/31936990/c9427649-2c44-405b-9d77-b497c8bbe3cd)
 
 
 An example application demonstrating the usage of CountryPickerModal is included in the example directory of the package.
