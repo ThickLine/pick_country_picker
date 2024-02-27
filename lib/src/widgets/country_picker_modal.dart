@@ -167,13 +167,6 @@ class _CountryPickerModalState extends State<CountryPickerModal> {
     }
 
     _filteredCountries = List<Country>.from(_countries);
-
-    // Ensure the selected country (if any) is reflected when the widget is built
-    if (_selectedCountry != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        widget.onCountryChanged(_selectedCountry!);
-      });
-    }
   }
 
 
@@ -191,9 +184,7 @@ class _CountryPickerModalState extends State<CountryPickerModal> {
     return CountryListWidget(
         availableCountries: _filteredCountries,
         selectedCountry: _selectedCountry,
-        onCountrySelected: (Country country) {
-          widget.onCountryChanged(country);
-        },
+        onCountrySelected: widget.onCountryChanged,
         borderBuilder: widget.borderBuilder,
         flagBuilder: widget.flagBuilder,
         selectedIcon: widget.selectedIcon,

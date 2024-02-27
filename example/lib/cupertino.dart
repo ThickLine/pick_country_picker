@@ -37,23 +37,8 @@ class _HomePageState extends State<HomePage> {
         child: CountryPickerModal(
           hideCloseIcon: true,
           hideSearch: false,
-          backButton: Container(),
           selectedCountryIsoCode: selectedCountry?.iso2Code,
           title: 'Select your country',
-          searchField: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Icon(Icons.search, color: Colors.grey[400]),
-              SizedBox(width: 8),
-              Text(
-                'Search',
-                style: TextStyle(
-                  color: Colors.grey[400],
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
           priorityCountryCodes: ['US', 'CA', 'GB', 'LV'],
           onCountryChanged: (Country country) {
             setState(() => selectedCountry = country);
@@ -61,9 +46,6 @@ class _HomePageState extends State<HomePage> {
           },
           countryDisplayBuilder: (Country country) {
             return '${country.countryName}';
-          },
-          subtitleBuilder: (Country country) {
-            return '+${country.countryCode}';
           },
           flagBuilder: (Country country) {
             return Image.asset(
@@ -73,17 +55,7 @@ class _HomePageState extends State<HomePage> {
               height: 20,
             );
           },
-          borderBuilder: (Country country) {
-            return Border.all(
-              color: Colors.grey[400]!,
-              width: 0.5,
-            );
-          },
-          selectedIcon: Icon(
-            Icons.fingerprint_outlined,
-            color: Colors.pink[200],
-          ),
-          useCupertinoModal: false, // Set to false to use Material design
+          useCupertinoModal: true, // Set to false to use Material design
         ),
       ),
     );

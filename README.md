@@ -88,11 +88,28 @@ CountryPickerModal(
     topLeft: Radius.circular(20),
     topRight: Radius.circular(20),
   ),
+   borderBuilder: (Country country) {
+            return Border.all(
+              color: Colors.grey[400]!,
+              width: 0.5,
+     );
+ },
   useCupertinoModal: false,
 )
 ```
 
 ## Example
+
+### With search:
+
+
+### Without search:
+
+
+### Build your own:
+
+
+
 
 An example application demonstrating the usage of CountryPickerModal is included in the example directory of the package.
 
