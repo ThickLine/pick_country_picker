@@ -100,14 +100,21 @@ CountryPickerModal(
 
 ## Example
 
+https://github.com/ThickLine/pick_country_picker/assets/31936990/22e7515c-8668-419e-8fbe-b8e002df9ec5
+
+
+
 ### With search:
+
+![Picker-with-search Medium](https://github.com/ThickLine/pick_country_picker/assets/31936990/99f79d9b-4540-4408-8f82-0f71b16e2a0c)
+
 
 
 ### Without search:
-
+![Picker-without-search Medium](https://github.com/ThickLine/pick_country_picker/assets/31936990/6115ad39-e39f-44ac-965c-8cc9da62d9a3)
 
 ### Build your own:
-
+![Picker-build-your-own Medium](https://github.com/ThickLine/pick_country_picker/assets/31936990/7390a1d5-d9e1-4177-bb2a-c86174a08554)
 
 
 
