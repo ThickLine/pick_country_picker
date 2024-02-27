@@ -67,7 +67,7 @@ class CountryPickerModal extends StatefulWidget {
   final Widget Function(Country)? countryListItemBuilder;
 
   /// Builder function for creating custom subtitle text under each country name.
-  final String Function(Country)? subtitleBuilder;
+  final String? Function(Country)? subtitleBuilder;
 
   /// Custom widget to indicate the selected country in the list.
   final Widget? selectedIcon;

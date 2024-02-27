@@ -8,7 +8,7 @@ class CountryListWidget extends StatelessWidget {
   final Widget Function(Country country)? flagBuilder;
   final Widget? selectedIcon;
   final String Function(Country country)? countryDisplayBuilder;
-  final String Function(Country country)? subtitleBuilder;
+  final String? Function(Country country)? subtitleBuilder;
   final Border Function(Country country)? borderBuilder;
 
   const CountryListWidget({
@@ -44,8 +44,8 @@ class CountryListWidget extends StatelessWidget {
                 ? countryDisplayBuilder!(country)
                 : defaultCountryDisplay(country)),
             subtitle: subtitleBuilder != null
-                ? Text(subtitleBuilder!(country))
-                : defaultSubtitleWidget(country),
+                ? Text(subtitleBuilder!(country) ?? '')
+                : SizedBox.shrink(),
             trailing: isSelected
                 ? selectedIcon ??
                     const Icon(
