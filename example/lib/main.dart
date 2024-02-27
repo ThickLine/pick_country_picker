@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage> {
         height: MediaQuery.of(context).size.height * 0.90,
         child: CountryPickerModal(
           hideCloseIcon: true,
-          hideSearch: false,
+          hideSearch: true,
           backButton: Container(),
           selectedCountryIsoCode: selectedCountry?.iso2Code,
           title: 'Select your country',
@@ -79,10 +79,10 @@ class _HomePageState extends State<HomePage> {
               width: 0.5,
             );
           },
-          selectedIcon: Icon(
-            Icons.fingerprint_outlined,
-            color: Colors.pink[200],
-          ),
+          // selectedIcon: Icon(
+          //   Icons.fingerprint_outlined,
+          //   color: Colors.pink[200],
+          // ),
           useCupertinoModal: false, // Set to false to use Material design
         ),
       ),
