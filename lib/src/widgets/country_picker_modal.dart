@@ -15,9 +15,22 @@ class CountryPickerModal extends StatefulWidget {
   /// Passes the newly selected [Country] object to the caller for further processing.
   final Function(Country) onCountryChanged;
 
-  /// An optional ISO 3166-1 alpha-2 code or country code to pre-select a country.
+/// An optional ISO 3166-1 alpha-2 code or country code to pre-select a country.
   /// If provided, the specified country will be highlighted and placed at the top of the list.
   final Country? selectedCountry;
+
+
+/// Optional parameter to specify the country to be pre-selected using its ISO 3166-1 alpha-2
+  /// representation (e.g., 'US' for United States, 'CA' for Canada).
+  final String? selectedCountryCode;
+
+  /// Optional parameter to specify the country to be pre-selected using its full country name
+  /// (e.g., 'United States', 'Canada').
+  final String? selectedCountryName;
+
+  /// Optional parameter to specify the country to be pre-selected using its ISO 3166-1 alpha-2
+  ///  ISO code (e.g., 'US', 'CA').
+  final String? selectedCountryIsoCode;
 
   /// Custom title for the modal. Useful for localization or when a different title is preferred
   /// over the default 'Select Country'.
@@ -83,6 +96,9 @@ class CountryPickerModal extends StatefulWidget {
       {Key? key,
       required this.onCountryChanged,
       this.selectedCountry,
+      this.selectedCountryCode,
+      this.selectedCountryName,
+      this.selectedCountryIsoCode,
       this.title = 'Select Country',
       this.priorityCountryCodes,
       this.overrideCountryCodes,
@@ -125,28 +141,41 @@ class _CountryPickerModalState extends State<CountryPickerModal> {
     _countries = countryService.filterAndSortCountries(
       overrideCountryCodes: widget.overrideCountryCodes,
       priorityCountryCodes: widget.priorityCountryCodes,
-      selectedCountry: widget.selectedCountry,
     );
 
+    // Determine the initial country based on the provided properties
+    if (_selectedCountry == null) {
+      if (widget.selectedCountryCode != null) {
+        _selectedCountry = pickCountryLookupService
+            .getCountryByCountryCode(widget.selectedCountryCode!);
+      } else if (widget.selectedCountry != null) {
+        _selectedCountry = widget.selectedCountry;
+      } else if (widget.selectedCountryName != null) {
+        _selectedCountry = pickCountryLookupService
+            .getCountryByName(widget.selectedCountryName!);
+      } else if (widget.selectedCountryIsoCode != null) {
+        _selectedCountry = pickCountryLookupService
+            .getCountryByIsoCode(widget.selectedCountryIsoCode!);
+      }
+    }
 
+    // If an initial country is determined, place it at the top of the list
+    if (_selectedCountry != null) {
+      _countries.removeWhere(
+          (country) => country.iso2Code == _selectedCountry!.iso2Code);
+      _countries.insert(0, _selectedCountry!);
+    }
 
     _filteredCountries = List<Country>.from(_countries);
 
-    if (widget.selectedCountry != null) {
-      initialCountry = pickCountryLookupService
-          .getCountryByIsoCode(widget.selectedCountry!.iso2Code);
-
-      if (initialCountry != null) {
-        setState(() {
-          _selectedCountry = initialCountry;
-        });
-
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          widget.onCountryChanged(_selectedCountry!);
-        });
-      }
+    // Ensure the selected country (if any) is reflected when the widget is built
+    if (_selectedCountry != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        widget.onCountryChanged(_selectedCountry!);
+      });
     }
   }
+
 
 
   void _filterCountries(String query) {
@@ -189,7 +218,7 @@ class _CountryPickerModalState extends State<CountryPickerModal> {
   Widget build(BuildContext context) {
     final modalContent = Column(
       children: [
-        if (!widget.hideSearch) _buildSearchField(),
+        _buildSearchField(),
         Expanded(child: _buildCountryPickerList()),
       ],
     );
@@ -199,14 +228,12 @@ class _CountryPickerModalState extends State<CountryPickerModal> {
         child: SafeArea(
           child: Column(
             children: [
-              if (!widget.hideCloseIcon)
                 Padding(
                   padding: const EdgeInsets.symmetric(
                       horizontal: 16.0, vertical: 8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      if (!widget.hideSearch)
+                  children: [
                         Expanded(child: _buildSearchField()),
                       widget.backButton ??
                           CupertinoButton(
@@ -217,7 +244,6 @@ class _CountryPickerModalState extends State<CountryPickerModal> {
                   ),
                 ),
               Expanded(
-                // Ensures the list takes the remaining space
                 child: _buildCountryPickerList(),
               ),
             ],
