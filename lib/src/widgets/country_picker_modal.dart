@@ -193,7 +193,6 @@ class _CountryPickerModalState extends State<CountryPickerModal> {
         selectedCountry: _selectedCountry,
         onCountrySelected: (Country country) {
           widget.onCountryChanged(country);
-          Navigator.of(context).pop();
         },
         borderBuilder: widget.borderBuilder,
         flagBuilder: widget.flagBuilder,
