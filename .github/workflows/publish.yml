@@ -1,0 +1,30 @@
+name: Publish to pub.dev
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # Required for authentication using OIDC
+      contents: write # This might be needed to check out the repository
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Dart SDK
+        uses: dart-lang/setup-dart@v1
+        with:
+          release-channel: stable
+
+      - name: Publish to pub.dev
+        uses: dart-lang/pub-dev-publish-action@v1
+        with:
+          environment: 'pub.dev'
+          # Ensure you have a secret set in your repository settings for PUB_DEV_TOKEN
+          token: ${{ secrets.PUB_DEV_TOKEN }}
+        # Uncomment and modify the next line if your package is not in the repository root
+        # working-directory: path/to/package/within/repository

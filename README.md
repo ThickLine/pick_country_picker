@@ -98,6 +98,37 @@ CountryPickerModal(
 )
 ```
 
+## Get Country
+To programmatically retrieve country information, you can utilize the following helper function:
+
+### Get Country by ISO Code
+
+To retrieve a country programmatically based on its ISO code, you can use the `getCountryByIsoCode` function. This function searches through a list of country objects and returns the one that matches the given ISO code. If no match is found, it returns `null`.
+
+```dart
+ Country? getCountryByIsoCode(String isoCode);
+```
+
+### Fetch a Country by Its Country Code
+For retrieving a country using its country code, the getCountryByCountryCode function is provided. Similar to getCountryByIsoCode, this function scans a list of country objects, finding and returning the one that matches the given country code. In cases where no country is found with the specified code, null is returned.
+
+```dart
+Country? getCountryByCountryCode(String countryCode)
+```
+
+### Fetch a Country by Its Name
+To find a country based on its name, you can use the getCountryByName function. This function searches through a list of country objects, returning the one whose countryName matches the provided name. If the search yields no results, the function returns null.
+
+```dart
+Country? getCountryByName(String countryName)
+```
+
+#### Usage Example:
+```dart
+final _pickCountryLookupService = PickCountryLookupService();
+
+Country? c= _pickCountryLookupService.getCountryByIsoCode("uk");
+```
 ## Example
 
 https://github.com/ThickLine/pick_country_picker/assets/31936990/22e7515c-8668-419e-8fbe-b8e002df9ec5

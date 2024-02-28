@@ -1,6 +1,6 @@
 name: pick_country_picker
 description: A highly customizable Flutter package for selecting a country from a modal list.
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/ThickLine/pick_country_picker
 
 environment:
@@ -14,7 +14,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_localizations:
     sdk: flutter
-  mockito: ^5.4.4
+
 
 dev_dependencies:
   flutter_test:
