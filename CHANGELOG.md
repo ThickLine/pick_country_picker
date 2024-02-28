@@ -1,6 +1,7 @@
 ## 0.0.2
 
 * Initial release.
+
 ## 0.0.3
 
 * Code Cleanup: Improved code efficiency by removing unused code and optimizing existing functionalities.
