@@ -12,7 +12,7 @@ class CountryListWidget extends StatelessWidget {
   final Border Function(Country country)? borderBuilder;
 
   const CountryListWidget({
-    Key? key,
+    super.key,
     required this.availableCountries,
     required this.selectedCountry,
     required this.onCountrySelected,
@@ -21,7 +21,7 @@ class CountryListWidget extends StatelessWidget {
     this.countryDisplayBuilder,
     this.subtitleBuilder,
     this.borderBuilder,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

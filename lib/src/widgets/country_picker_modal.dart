@@ -93,7 +93,7 @@ class CountryPickerModal extends StatefulWidget {
   final Border Function(Country country)? borderBuilder;
 
   const CountryPickerModal(
-      {Key? key,
+      {super.key,
       required this.onCountryChanged,
       this.selectedCountry,
       this.selectedCountryCode,
@@ -115,14 +115,13 @@ class CountryPickerModal extends StatefulWidget {
       this.subtitleBuilder,
       this.cancelText = 'Cancel',
       this.placeholderText = 'Search for a country',
-      this.borderBuilder})
-      : super(key: key);
+      this.borderBuilder});
 
   @override
-  _CountryPickerModalState createState() => _CountryPickerModalState();
+  CountryPickerModalState createState() => CountryPickerModalState();
 }
 
-class _CountryPickerModalState extends State<CountryPickerModal> {
+class CountryPickerModalState extends State<CountryPickerModal> {
   final TextEditingController _searchController = TextEditingController();
   List<Country> _countries = [];
   List<Country> _filteredCountries = [];

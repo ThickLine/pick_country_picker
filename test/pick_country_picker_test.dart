@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pick_country_picker/pick_country_picker.dart';
-import 'package:pick_country_picker/src/models/country.dart';
+
 
 void main() {
   testWidgets('CountryPickerModal displays correctly',

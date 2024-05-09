@@ -8,12 +8,12 @@ class SearchFieldWidget extends StatelessWidget {
   final String placeholder;
 
   const SearchFieldWidget({
-    Key? key,
+    super.key,
     required this.controller,
     required this.onSearchChanged,
     this.useCupertino = false,
     this.placeholder = 'Search',
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
