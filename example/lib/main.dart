@@ -39,6 +39,7 @@ class _HomePageState extends State<HomePage> {
           hideSearch: true,
           backButton: Container(),
           selectedCountryIsoCode: selectedCountry?.iso2Code,
+          excludedCountryCodes: ['AX', 'US', 'MX'],
           title: 'Select your country',
           searchField: Row(
             mainAxisAlignment: MainAxisAlignment.center,

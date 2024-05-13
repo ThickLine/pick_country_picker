@@ -5,21 +5,23 @@ import 'package:pick_country_picker/src/data/country_codes.dart';
 class PickCountryLookupService {
   final List<Country> _allCountries;
 
-  PickCountryLookupService()
-      : _allCountries =
-            countryCodes.map((code) => Country.fromJson(code)).toList();
+  PickCountryLookupService({List<String>? excludedCountryCodes})
+      : _allCountries = countryCodes
+            .map((code) => Country.fromJson(code))
+            .where((country) =>
+                excludedCountryCodes == null ||
+                !excludedCountryCodes.contains(country.iso2Code))
+            .toList();
 
-// Fetch a country by its ISO code
+  // Fetch a country by its ISO code
   Country? getCountryByIsoCode(String isoCode) {
-    return _allCountries
-        .firstWhereOrNull(
+    return _allCountries.firstWhereOrNull(
         (country) => country.iso2Code.toLowerCase() == isoCode.toLowerCase());
   }
 
   // Fetch a country by its country code
   Country? getCountryByCountryCode(String countryCode) {
-    return _allCountries
-        .firstWhereOrNull((country) =>
+    return _allCountries.firstWhereOrNull((country) =>
         country.countryCode.toLowerCase() == countryCode.toLowerCase());
   }
 

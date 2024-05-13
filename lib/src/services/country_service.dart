@@ -11,6 +11,7 @@ class CountryService {
   List<Country> filterAndSortCountries({
     List<String>? overrideCountryCodes,
     List<String>? priorityCountryCodes,
+    List<String>? excludedCountryCodes,
     Country? selectedCountry,
   }) {
     var countries = List<Country>.from(allCountries);
@@ -29,6 +30,11 @@ class CountryService {
           .where((country) => !priorityCountryCodes.contains(country.iso2Code))
           .toList();
       countries = priorityCountries + otherCountries;
+    }
+
+    if (excludedCountryCodes != null) {
+      countries.removeWhere(
+          (country) => excludedCountryCodes.contains(country.iso2Code));
     }
 
     if (selectedCountry != null) {

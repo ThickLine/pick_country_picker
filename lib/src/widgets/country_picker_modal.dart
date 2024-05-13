@@ -5,7 +5,6 @@ import 'package:pick_country_picker/src/services/country_service.dart';
 import 'package:pick_country_picker/src/widgets/country_list_widget.dart';
 import 'package:pick_country_picker/src/widgets/search_field_widget.dart';
 
-
 /// A modal widget that allows the user to pick a country from a list.
 ///
 /// Offers extensive customization options, including overriding the default country list,
@@ -15,12 +14,11 @@ class CountryPickerModal extends StatefulWidget {
   /// Passes the newly selected [Country] object to the caller for further processing.
   final Function(Country) onCountryChanged;
 
-/// An optional ISO 3166-1 alpha-2 code or country code to pre-select a country.
+  /// An optional ISO 3166-1 alpha-2 code or country code to pre-select a country.
   /// If provided, the specified country will be highlighted and placed at the top of the list.
   final Country? selectedCountry;
 
-
-/// Optional parameter to specify the country to be pre-selected using its ISO 3166-1 alpha-2
+  /// Optional parameter to specify the country to be pre-selected using its ISO 3166-1 alpha-2
   /// representation (e.g., 'US' for United States, 'CA' for Canada).
   final String? selectedCountryCode;
 
@@ -43,6 +41,10 @@ class CountryPickerModal extends StatefulWidget {
   /// Country ISO codes to exclusively display in the picker.
   /// Use this to restrict the selection to a specific set of countries, overriding the default list.
   final List<String>? overrideCountryCodes;
+
+  /// Country ISO codes to exclusively remove from a picker.
+  /// Use this to restrict the selection to a specific set of countries, overriding the default list.
+  final List<String>? excludedCountryCodes;
 
   /// Controls whether to display the search field. If true, users can only scroll to find countries.
   final bool hideSearch;
@@ -102,6 +104,7 @@ class CountryPickerModal extends StatefulWidget {
       this.title = 'Select Country',
       this.priorityCountryCodes,
       this.overrideCountryCodes,
+      this.excludedCountryCodes,
       this.hideSearch = false,
       this.hideCloseIcon = false,
       this.useCupertinoModal = false,
@@ -136,10 +139,12 @@ class CountryPickerModalState extends State<CountryPickerModal> {
 
   void _initializeCountries() {
     final countryService = CountryService();
-    final pickCountryLookupService = PickCountryLookupService();
+    final pickCountryLookupService = PickCountryLookupService(
+        excludedCountryCodes: widget.excludedCountryCodes);
     _countries = countryService.filterAndSortCountries(
       overrideCountryCodes: widget.overrideCountryCodes,
       priorityCountryCodes: widget.priorityCountryCodes,
+      excludedCountryCodes: widget.excludedCountryCodes,
     );
 
     // Determine the initial country based on the provided properties
@@ -167,8 +172,6 @@ class CountryPickerModalState extends State<CountryPickerModal> {
 
     _filteredCountries = List<Country>.from(_countries);
   }
-
-
 
   void _filterCountries(String query) {
     setState(() {
@@ -217,21 +220,21 @@ class CountryPickerModalState extends State<CountryPickerModal> {
         child: SafeArea(
           child: Column(
             children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                        Expanded(child: _buildSearchField()),
-                      widget.backButton ??
-                          CupertinoButton(
-                            child: Text(widget.cancelText),
-                            onPressed: () => Navigator.of(context).pop(),
-                          ),
-                    ],
-                  ),
+                    Expanded(child: _buildSearchField()),
+                    widget.backButton ??
+                        CupertinoButton(
+                          child: Text(widget.cancelText),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                  ],
                 ),
+              ),
               Expanded(
                 child: _buildCountryPickerList(),
               ),
