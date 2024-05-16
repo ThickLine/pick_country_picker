@@ -18,3 +18,6 @@
     Breaking: `borderBuilder` now accepts a `Widget` input instead of `Border`
 *  New Features
     Added `excludedCountryCodes` from `PickCountryLookupService`
+
+## 2.0.0
+* bump to follow Semantic Versioning
