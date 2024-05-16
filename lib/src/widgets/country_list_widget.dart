@@ -56,7 +56,7 @@ class CountryListWidget extends StatelessWidget {
     );
   }
 
-  // Example default widget implementations
+
   Widget defaultFlagWidget(Country country) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(4.0),

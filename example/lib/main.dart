@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pick_country_picker/pick_country_picker.dart';
+// Define the constant for excluded country codes
+const List<String> excludedCountryCodes = ["AX"];
 
 void main() => runApp(ExampleApp());
 
@@ -25,7 +27,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    selectedCountry = PickCountryLookupService(excludedCountryCodes: ["AX"])
+    selectedCountry =
+        PickCountryLookupService(excludedCountryCodes: excludedCountryCodes)
         .getCountryByCountryCode("358");
   }
 
@@ -40,7 +43,7 @@ class _HomePageState extends State<HomePage> {
           hideSearch: true,
           backButton: Container(),
           selectedCountryIsoCode: selectedCountry?.iso2Code,
-          excludedCountryCodes: ["AX"],
+          excludedCountryCodes: excludedCountryCodes,
           title: 'Select your country',
           searchField: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -82,10 +85,7 @@ class _HomePageState extends State<HomePage> {
               width: 0.5,
             )),
           ),
-          // selectedIcon: Icon(
-          //   Icons.fingerprint_outlined,
-          //   color: Colors.pink[200],
-          // ),
+
           useCupertinoModal: false, // Set to false to use Material design
         ),
       ),
