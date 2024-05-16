@@ -92,33 +92,43 @@ class CountryPickerModal extends StatefulWidget {
   /// A callback function that allows for customized border rendering for each country
   /// item in the list. If provided, this function will be used to generate the border
   /// for each ListTile.
-  final Border Function(Country country)? borderBuilder;
+  final Widget? borderBuilder;
 
-  const CountryPickerModal(
-      {super.key,
-      required this.onCountryChanged,
-      this.selectedCountry,
-      this.selectedCountryCode,
-      this.selectedCountryName,
-      this.selectedCountryIsoCode,
-      this.title = 'Select Country',
-      this.priorityCountryCodes,
-      this.overrideCountryCodes,
-      this.excludedCountryCodes,
-      this.hideSearch = false,
-      this.hideCloseIcon = false,
-      this.useCupertinoModal = false,
-      this.searchField,
-      this.backButton,
-      this.countryListItemBuilder,
-      this.selectedIcon,
-      this.countryDisplayBuilder,
-      this.flagBuilder,
-      this.borderRadius,
-      this.subtitleBuilder,
-      this.cancelText = 'Cancel',
-      this.placeholderText = 'Search for a country',
-      this.borderBuilder});
+  CountryPickerModal({
+    super.key,
+    required this.onCountryChanged,
+    this.selectedCountry,
+    this.selectedCountryCode,
+    this.selectedCountryName,
+    this.selectedCountryIsoCode,
+    this.title = 'Select Country',
+    this.priorityCountryCodes,
+    this.overrideCountryCodes,
+    this.excludedCountryCodes,
+    this.hideSearch = false,
+    this.hideCloseIcon = false,
+    this.useCupertinoModal = false,
+    this.searchField,
+    this.backButton,
+    this.countryListItemBuilder,
+    this.selectedIcon,
+    this.countryDisplayBuilder,
+    this.flagBuilder,
+    this.borderRadius,
+    this.subtitleBuilder,
+    this.cancelText = 'Cancel',
+    this.placeholderText = 'Search for a country',
+    this.borderBuilder,
+  }) : assert(
+          overrideCountryCodes == null ||
+              excludedCountryCodes == null ||
+              overrideCountryCodes
+                  .toSet()
+                  .intersection(excludedCountryCodes.toSet())
+                  .isEmpty,
+          'overrideCountryCodes and excludedCountryCodes must not contain any of the same values.',
+        );
+
 
   @override
   CountryPickerModalState createState() => CountryPickerModalState();

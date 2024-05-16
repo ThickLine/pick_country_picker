@@ -12,3 +12,9 @@
 
 ## 1.1.0
 * Added `excludedCountryCodes` option to exclude specific countries from code execution
+
+## 1.2.0
+* Breaking Changes
+    Breaking: `borderBuilder` now accepts a `Widget` input instead of `Border`
+*  New Features
+    Added `excludedCountryCodes` from `PickCountryLookupService`

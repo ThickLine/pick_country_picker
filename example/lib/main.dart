@@ -25,7 +25,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    selectedCountry = PickCountryLookupService().getCountryByIsoCode('LV');
+    selectedCountry = PickCountryLookupService(excludedCountryCodes: ["AX"])
+        .getCountryByCountryCode("358");
   }
 
   void _showCountryPicker() {
@@ -39,7 +40,7 @@ class _HomePageState extends State<HomePage> {
           hideSearch: true,
           backButton: Container(),
           selectedCountryIsoCode: selectedCountry?.iso2Code,
-          excludedCountryCodes: ['AX', 'US', 'MX'],
+          excludedCountryCodes: ["AX"],
           title: 'Select your country',
           searchField: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -74,12 +75,13 @@ class _HomePageState extends State<HomePage> {
               height: 20,
             );
           },
-          borderBuilder: (Country country) {
-            return Border.all(
+          borderBuilder: Container(
+            decoration: BoxDecoration(
+                border: Border.all(
               color: Colors.grey[400]!,
               width: 0.5,
-            );
-          },
+            )),
+          ),
           // selectedIcon: Icon(
           //   Icons.fingerprint_outlined,
           //   color: Colors.pink[200],

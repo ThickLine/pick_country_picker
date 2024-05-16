@@ -4,8 +4,11 @@ import 'package:pick_country_picker/src/data/country_codes.dart';
 
 class PickCountryLookupService {
   final List<Country> _allCountries;
+  final List<String>? overrideCountryCodes;
 
-  PickCountryLookupService({List<String>? excludedCountryCodes})
+
+  PickCountryLookupService(
+      {this.overrideCountryCodes, List<String>? excludedCountryCodes})
       : _allCountries = countryCodes
             .map((code) => Country.fromJson(code))
             .where((country) =>

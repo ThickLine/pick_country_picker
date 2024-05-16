@@ -9,7 +9,7 @@ class CountryListWidget extends StatelessWidget {
   final Widget? selectedIcon;
   final String Function(Country country)? countryDisplayBuilder;
   final String? Function(Country country)? subtitleBuilder;
-  final Border Function(Country country)? borderBuilder;
+  final Widget? borderBuilder;
 
   const CountryListWidget({
     super.key,
@@ -25,36 +25,32 @@ class CountryListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    return ListView.separated(
       itemCount: availableCountries.length,
+      separatorBuilder: (_, __) => borderBuilder ?? const SizedBox.shrink(),
       itemBuilder: (context, index) {
         final country = availableCountries[index];
         final isSelected = selectedCountry != null &&
             country.iso2Code == selectedCountry!.iso2Code;
 
-        return Container(
-          decoration: BoxDecoration(
-            border: borderBuilder != null ? borderBuilder!(country) : null,
-          ),
-          child: ListTile(
-            leading: flagBuilder != null
-                ? flagBuilder!(country)
-                : defaultFlagWidget(country),
-            title: Text(countryDisplayBuilder != null
-                ? countryDisplayBuilder!(country)
-                : defaultCountryDisplay(country)),
-            subtitle: subtitleBuilder != null
-                ? Text(subtitleBuilder!(country) ?? '')
-                : null,
-            trailing: isSelected
-                ? selectedIcon ??
-                    const Icon(
-                      Icons.check_circle,
-                      color: Colors.green,
-                    )
-                : null,
-            onTap: () => onCountrySelected(country),
-          ),
+        return ListTile(
+          leading: flagBuilder != null
+              ? flagBuilder!(country)
+              : defaultFlagWidget(country),
+          title: Text(countryDisplayBuilder != null
+              ? countryDisplayBuilder!(country)
+              : defaultCountryDisplay(country)),
+          subtitle: subtitleBuilder != null
+              ? Text(subtitleBuilder!(country) ?? '')
+              : null,
+          trailing: isSelected
+              ? selectedIcon ??
+                  const Icon(
+                    Icons.check_circle,
+                    color: Colors.green,
+                  )
+              : null,
+          onTap: () => onCountrySelected(country),
         );
       },
     );
