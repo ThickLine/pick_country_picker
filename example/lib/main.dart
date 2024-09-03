@@ -3,12 +3,14 @@ import 'package:pick_country_picker/pick_country_picker.dart';
 // Define the constant for excluded country codes
 const List<String> excludedCountryCodes = ["AX"];
 
-void main() => runApp(ExampleApp());
+void main() => runApp(const ExampleApp());
 
 class ExampleApp extends StatelessWidget {
+  const ExampleApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Country Picker Example',
       home: HomePage(),
@@ -17,19 +19,22 @@ class ExampleApp extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
+
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
   Country? selectedCountry;
+  List<Country> filteredCountries = [];
+  final PickCountryLookupService _lookupService =
+      PickCountryLookupService(excludedCountryCodes: excludedCountryCodes);
 
   @override
   void initState() {
     super.initState();
-    selectedCountry =
-        PickCountryLookupService(excludedCountryCodes: excludedCountryCodes)
-        .getCountryByCountryCode("358");
+    selectedCountry = _lookupService.getCountryByCountryCode("358");
   }
 
   void _showCountryPicker() {
@@ -40,32 +45,20 @@ class _HomePageState extends State<HomePage> {
         height: MediaQuery.of(context).size.height * 0.90,
         child: CountryPickerModal(
           hideCloseIcon: true,
-          hideSearch: true,
+          hideSearch: false,
           backButton: Container(),
           selectedCountryIsoCode: selectedCountry?.iso2Code,
           excludedCountryCodes: excludedCountryCodes,
           title: 'Select your country',
-          searchField: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Icon(Icons.search, color: Colors.grey[400]),
-              SizedBox(width: 8),
-              Text(
-                'Search',
-                style: TextStyle(
-                  color: Colors.grey[400],
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
-          priorityCountryCodes: ['US', 'CA', 'GB', 'LV'],
+
+
+          priorityCountryCodes: const ['US', 'CA', 'GB', 'LV'],
           onCountryChanged: (Country country) {
             setState(() => selectedCountry = country);
             Navigator.of(context).pop();
           },
           countryDisplayBuilder: (Country country) {
-            return '${country.countryName}';
+            return country.countryName;
           },
           subtitleBuilder: (Country country) {
             return '+${country.countryCode}';
@@ -85,7 +78,6 @@ class _HomePageState extends State<HomePage> {
               width: 0.5,
             )),
           ),
-
           useCupertinoModal: false, // Set to false to use Material design
         ),
       ),
@@ -96,7 +88,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Country Picker Example'),
+        title: const Text('Country Picker Example'),
       ),
       body: Center(
         child: Column(
@@ -104,12 +96,12 @@ class _HomePageState extends State<HomePage> {
           children: <Widget>[
             ElevatedButton(
               onPressed: _showCountryPicker,
-              child: Text('Show Country Picker'),
+              child: const Text('Show Country Picker'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             if (selectedCountry != null) ...[
               Text('Selected Country: ${selectedCountry!.countryName}'),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Image.asset(
                 selectedCountry!.flagUri!,
                 package: 'pick_country_picker',

@@ -8,7 +8,7 @@ void main() {
   testWidgets('ExampleApp and CountryPickerModal display correctly',
       (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(ExampleApp());
+    await tester.pumpWidget(const ExampleApp());
 
     // Verify that the app is displayed correctly.
     expect(find.byType(ExampleApp), findsOneWidget);

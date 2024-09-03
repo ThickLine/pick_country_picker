@@ -17,7 +17,7 @@ A highly customizable modal widget for Flutter that allows users to pick a count
 Add this to your package's pubspec.yaml file:
 
 ```dart dependencies:
- pick_country_picker: ^2.0.0
+ pick_country_picker: ^3.0.0
  ```
 2. Install it
 You can install packages from the command line:
@@ -72,7 +72,6 @@ CountryPickerModal(
   selectedCountryCode: 'US',
   title: 'Select Your Country',
   priorityCountryCodes: ['US', 'CA'],
-  searchField: TextField(decoration: InputDecoration(labelText: 'Search...')),
   countryListItemBuilder: (Country country) {
     return ListTile(
       title: Text(country.countryName),

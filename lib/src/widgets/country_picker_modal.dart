@@ -14,7 +14,7 @@ class CountryPickerModal extends StatefulWidget {
   /// Passes the newly selected [Country] object to the caller for further processing.
   final Function(Country) onCountryChanged;
 
-  /// An optional ISO 3166-1 alpha-2 code or country code to pre-select a country.
+  /// An optional [Country] object to pre-select a country.
   /// If provided, the specified country will be highlighted and placed at the top of the list.
   final Country? selectedCountry;
 
@@ -27,7 +27,7 @@ class CountryPickerModal extends StatefulWidget {
   final String? selectedCountryName;
 
   /// Optional parameter to specify the country to be pre-selected using its ISO 3166-1 alpha-2
-  ///  ISO code (e.g., 'US', 'CA').
+  /// ISO code (e.g., 'US', 'CA').
   final String? selectedCountryIsoCode;
 
   /// Custom title for the modal. Useful for localization or when a different title is preferred
@@ -42,8 +42,8 @@ class CountryPickerModal extends StatefulWidget {
   /// Use this to restrict the selection to a specific set of countries, overriding the default list.
   final List<String>? overrideCountryCodes;
 
-  /// Country ISO codes to exclusively remove from a picker.
-  /// Use this to restrict the selection to a specific set of countries, overriding the default list.
+  /// Country ISO codes to exclusively remove from the picker.
+  /// Use this to exclude specific countries from the selection list.
   final List<String>? excludedCountryCodes;
 
   /// Controls whether to display the search field. If true, users can only scroll to find countries.
@@ -58,7 +58,7 @@ class CountryPickerModal extends StatefulWidget {
 
   /// Provides a completely custom search field widget.
   /// Use this to tailor the search field's appearance and behavior.
-  final Widget? searchField;
+  final Widget? customSearchField;
 
   /// Custom widget for the back or close button in the modal's app bar.
   /// Provides a way to customize the appearance or behavior of the back navigation.
@@ -94,7 +94,52 @@ class CountryPickerModal extends StatefulWidget {
   /// for each ListTile.
   final Widget? borderBuilder;
 
-  CountryPickerModal({
+  /// Custom prefix icon for the search field.
+  final Widget? searchPrefixIcon;
+
+  /// Custom suffix icon for the search field.
+  final Icon? searchSuffixIcon;
+
+  /// Custom text style for the search field input.
+  final TextStyle? searchTextStyle;
+
+  /// Custom text style for the search field placeholder text.
+  final TextStyle? searchPlaceholderStyle;
+
+  /// Custom input decoration for the search field (Material design only).
+  final InputDecoration? searchDecoration;
+
+  /// Custom box decoration for the search field (Cupertino design only).
+  final BoxDecoration? searchBoxDecoration;
+
+  /// Custom cursor color for the search field.
+  final Color? searchCursorColor;
+
+  /// Custom border radius for the search field.
+  final double? searchBorderRadius;
+
+  /// Custom content padding for the search field.
+  final EdgeInsetsGeometry? searchContentPadding;
+
+  /// Callback function triggered when the search field is tapped.
+  final Function()? onSearchTap;
+
+  /// Callback function triggered when the search is submitted.
+  final Function(String)? onSearchSubmitted;
+
+  /// Controls whether the search field should be auto-focused when the modal is opened.
+  final bool searchAutofocus;
+
+  /// Custom focus node for the search field.
+  final FocusNode? searchFocusNode;
+
+  /// Custom background color for the search field.
+  final Color? searchBackgroundColor;
+
+  /// Controls whether the search field is enabled or disabled.
+  final bool? searchEnabled;
+
+  const CountryPickerModal({
     super.key,
     required this.onCountryChanged,
     this.selectedCountry,
@@ -108,7 +153,7 @@ class CountryPickerModal extends StatefulWidget {
     this.hideSearch = false,
     this.hideCloseIcon = false,
     this.useCupertinoModal = false,
-    this.searchField,
+    this.customSearchField,
     this.backButton,
     this.countryListItemBuilder,
     this.selectedIcon,
@@ -119,19 +164,36 @@ class CountryPickerModal extends StatefulWidget {
     this.cancelText = 'Cancel',
     this.placeholderText = 'Search for a country',
     this.borderBuilder,
-  }) : assert(
-          overrideCountryCodes == null ||
-              excludedCountryCodes == null ||
-              overrideCountryCodes
-                  .toSet()
-                  .intersection(excludedCountryCodes.toSet())
-                  .isEmpty,
-          'overrideCountryCodes and excludedCountryCodes must not contain any of the same values.',
-        );
-
+    this.searchPrefixIcon,
+    this.searchSuffixIcon,
+    this.searchTextStyle,
+    this.searchPlaceholderStyle,
+    this.searchDecoration,
+    this.searchBoxDecoration,
+    this.searchCursorColor,
+    this.searchBorderRadius,
+    this.searchContentPadding,
+    this.onSearchTap,
+    this.onSearchSubmitted,
+    this.searchAutofocus = false,
+    this.searchFocusNode,
+    this.searchBackgroundColor,
+    this.searchEnabled,
+  });
 
   @override
   CountryPickerModalState createState() => CountryPickerModalState();
+
+  /// Validates that overrideCountryCodes and excludedCountryCodes don't contain overlapping values.
+  bool validateCountryCodes() {
+    if (overrideCountryCodes == null || excludedCountryCodes == null) {
+      return true;
+    }
+    return overrideCountryCodes!
+        .toSet()
+        .intersection(excludedCountryCodes!.toSet())
+        .isEmpty;
+  }
 }
 
 class CountryPickerModalState extends State<CountryPickerModal> {
@@ -139,7 +201,6 @@ class CountryPickerModalState extends State<CountryPickerModal> {
   List<Country> _countries = [];
   List<Country> _filteredCountries = [];
   Country? _selectedCountry;
-  Country? initialCountry;
 
   @override
   void initState() {
@@ -157,7 +218,6 @@ class CountryPickerModalState extends State<CountryPickerModal> {
       excludedCountryCodes: widget.excludedCountryCodes,
     );
 
-    // Determine the initial country based on the provided properties
     if (_selectedCountry == null) {
       if (widget.selectedCountryCode != null) {
         _selectedCountry = pickCountryLookupService
@@ -173,7 +233,6 @@ class CountryPickerModalState extends State<CountryPickerModal> {
       }
     }
 
-    // If an initial country is determined, place it at the top of the list
     if (_selectedCountry != null) {
       _countries.removeWhere(
           (country) => country.iso2Code == _selectedCountry!.iso2Code);
@@ -194,26 +253,52 @@ class CountryPickerModalState extends State<CountryPickerModal> {
 
   Widget _buildCountryPickerList() {
     return CountryListWidget(
-        availableCountries: _filteredCountries,
-        selectedCountry: _selectedCountry,
-        onCountrySelected: widget.onCountryChanged,
-        borderBuilder: widget.borderBuilder,
-        flagBuilder: widget.flagBuilder,
-        selectedIcon: widget.selectedIcon,
-        countryDisplayBuilder: widget.countryDisplayBuilder,
-        subtitleBuilder: widget.subtitleBuilder);
+      availableCountries: _filteredCountries,
+      selectedCountry: _selectedCountry,
+      onCountrySelected: (country) {
+        setState(() {
+          _selectedCountry = country;
+        });
+        widget.onCountryChanged(country);
+      },
+      borderBuilder: widget.borderBuilder,
+      flagBuilder: widget.flagBuilder,
+      selectedIcon: widget.selectedIcon,
+      countryDisplayBuilder: widget.countryDisplayBuilder,
+      subtitleBuilder: widget.subtitleBuilder,
+    );
   }
 
   Widget _buildSearchField() {
-    return widget.hideSearch
-        ? const SizedBox.shrink()
-        : widget.searchField ??
-            SearchFieldWidget(
-              controller: _searchController,
-              onSearchChanged: _filterCountries,
-              useCupertino: widget.useCupertinoModal,
-              placeholder: widget.placeholderText,
-            );
+    if (widget.hideSearch) {
+      return const SizedBox.shrink();
+    }
+
+    if (widget.customSearchField != null) {
+      return widget.customSearchField!;
+    }
+
+    return SearchFieldWidget(
+      controller: _searchController,
+      onSearchChanged: _filterCountries,
+      useCupertino: widget.useCupertinoModal,
+      placeholder: widget.placeholderText,
+      prefixIcon: widget.searchPrefixIcon,
+      suffixIcon: widget.searchSuffixIcon,
+      textStyle: widget.searchTextStyle,
+      placeholderStyle: widget.searchPlaceholderStyle,
+      decoration: widget.searchDecoration,
+      boxDecoration: widget.searchBoxDecoration,
+      cursorColor: widget.searchCursorColor,
+      borderRadius: widget.searchBorderRadius,
+      contentPadding: widget.searchContentPadding,
+      onTap: widget.onSearchTap,
+      onSubmitted: widget.onSearchSubmitted,
+      autofocus: widget.searchAutofocus,
+      focusNode: widget.searchFocusNode,
+      backgroundColor: widget.searchBackgroundColor,
+      enabled: widget.searchEnabled,
+    );
   }
 
   @override
@@ -227,29 +312,19 @@ class CountryPickerModalState extends State<CountryPickerModal> {
 
     if (widget.useCupertinoModal) {
       return CupertinoPageScaffold(
+        navigationBar: CupertinoNavigationBar(
+          middle: Text(widget.title),
+          leading: widget.hideCloseIcon
+              ? null
+              : (widget.backButton ??
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: Text(widget.cancelText),
+                    onPressed: () => Navigator.of(context).pop(),
+                  )),
+        ),
         child: SafeArea(
-          child: Column(
-            children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(child: _buildSearchField()),
-                    widget.backButton ??
-                        CupertinoButton(
-                          child: Text(widget.cancelText),
-                          onPressed: () => Navigator.of(context).pop(),
-                        ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: _buildCountryPickerList(),
-              ),
-            ],
-          ),
+          child: modalContent,
         ),
       );
     } else {
@@ -260,8 +335,17 @@ class CountryPickerModalState extends State<CountryPickerModal> {
               ? null
               : (widget.backButton ?? const BackButton()),
         ),
-        body: modalContent,
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: modalContent,
+        ),
       );
     }
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 }
