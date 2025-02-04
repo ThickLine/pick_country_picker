@@ -50,8 +50,7 @@ class _HomePageState extends State<HomePage> {
           selectedCountryIsoCode: selectedCountry?.iso2Code,
           excludedCountryCodes: excludedCountryCodes,
           title: 'Select your country',
-
-
+          hideNavigationBar: true,
           priorityCountryCodes: const ['US', 'CA', 'GB', 'LV'],
           onCountryChanged: (Country country) {
             setState(() => selectedCountry = country);

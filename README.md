@@ -5,6 +5,7 @@ A highly customizable modal widget for Flutter that allows users to pick a count
 ## Features
 
 - **Customization:** Override the default list of countries, prioritize countries, and use custom widgets for search fields, country list items, and selection icons.
+- **Navigation Bar Customization:** Full control over navigation bars with options to customize or hide them in both Material and Cupertino styles.
 - **Material and Cupertino Support:** Choose between Material or Cupertino modal styles to match your app's design.
 - **Search Functionality:** Includes a search bar to quickly find countries by name.
 - **Custom List Items:** Customize the appearance of country list items with a builder function.
@@ -12,13 +13,13 @@ A highly customizable modal widget for Flutter that allows users to pick a count
 
 ## Installation
 
-
 1. Depend on it
 Add this to your package's pubspec.yaml file:
 
-```dart dependencies:
- pick_country_picker: ^3.0.0
- ```
+```dart
+dependencies:
+  pick_country_picker: ^3.1.0
+```
 2. Install it
 You can install packages from the command line:
 
@@ -30,13 +31,11 @@ with Flutter:
 $ flutter pub get
 ```
 
-
 3. Import it
 Now in your Dart code, you can use:
 ```dart
 import 'package:pick_country_picker/pick_country_picker.dart';
-  ```
-
+```
 
 ## Usage
 
@@ -59,7 +58,6 @@ void _showCountryPicker(BuildContext context) {
     },
   );
 }
-
 ```
 
 ## Customization
@@ -71,6 +69,24 @@ CountryPickerModal(
   onCountryChanged: (Country country) {},
   selectedCountryCode: 'US',
   title: 'Select Your Country',
+  // Navigation Bar Customization
+  hideNavigationBar: false,  // Set to true to hide the navigation bar completely
+  appBar: AppBar(  // Custom Material AppBar
+    title: Text('Select Country'),
+    leading: IconButton(
+      icon: Icon(Icons.close),
+      onPressed: () => Navigator.pop(context),
+    ),
+  ),
+  navigationBar: CupertinoNavigationBar(  // Custom Cupertino Navigation Bar
+    middle: Text('Select Country'),
+    leading: CupertinoButton(
+      padding: EdgeInsets.zero,
+      child: Text('Close'),
+      onPressed: () => Navigator.pop(context),
+    ),
+  ),
+  // Other customization options
   priorityCountryCodes: ['US', 'CA'],
   countryListItemBuilder: (Country country) {
     return ListTile(
@@ -88,12 +104,12 @@ CountryPickerModal(
     topLeft: Radius.circular(20),
     topRight: Radius.circular(20),
   ),
-   borderBuilder: (Country country) {
-            return Border.all(
-              color: Colors.grey[400]!,
-              width: 0.5,
-     );
- },
+  borderBuilder: (Country country) {
+    return Border.all(
+      color: Colors.grey[400]!,
+      width: 0.5,
+    );
+  },
   useCupertinoModal: false,
 )
 ```
@@ -106,7 +122,7 @@ To programmatically retrieve country information, you can utilize the following 
 To retrieve a country programmatically based on its ISO code, you can use the `getCountryByIsoCode` function. This function searches through a list of country objects and returns the one that matches the given ISO code. If no match is found, it returns `null`.
 
 ```dart
- Country? getCountryByIsoCode(String isoCode);
+Country? getCountryByIsoCode(String isoCode);
 ```
 
 ### Fetch a Country by Its Country Code
@@ -129,6 +145,7 @@ final _pickCountryLookupService = PickCountryLookupService();
 
 Country? c= _pickCountryLookupService.getCountryByIsoCode("uk");
 ```
+
 ## Example
 
 https://github.com/ThickLine/pick_country_picker/assets/31936990/22e7515c-8668-419e-8fbe-b8e002df9ec5
@@ -152,4 +169,3 @@ https://github.com/ThickLine/pick_country_picker/assets/31936990/22e7515c-8668-4
 An example application demonstrating the usage of CountryPickerModal is included in the example directory of the package.
 
 For more information and additional customization options, please refer to the package documentation.
-

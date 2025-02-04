@@ -39,6 +39,7 @@ class _HomePageState extends State<HomePage> {
       builder: (_) => SizedBox(
         height: MediaQuery.of(context).size.height * 0.90,
         child: CountryPickerModal(
+
           hideCloseIcon: true,
           hideSearch: false,
           selectedCountryIsoCode: selectedCountry?.iso2Code,

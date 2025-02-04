@@ -100,6 +100,12 @@ class CountryPickerModal extends StatefulWidget {
   /// Custom suffix icon for the search field.
   final Icon? searchSuffixIcon;
 
+  /// Controls whether to hide the navigation bar (AppBar or CupertinoNavigationBar).
+  /// If true, no navigation bar will be shown. This is useful when you want to create
+  /// a custom navigation experience or when the modal is used in a bottom sheet.
+  /// Example: hideNavigationBar: true for a clean, minimal interface.
+  final bool hideNavigationBar;
+
   /// Custom text style for the search field input.
   final TextStyle? searchTextStyle;
 
@@ -138,6 +144,12 @@ class CountryPickerModal extends StatefulWidget {
 
   /// Controls whether the search field is enabled or disabled.
   final bool? searchEnabled;
+
+  /// Custom navigation bar for the modal (iOS design only).
+  final ObstructingPreferredSizeWidget? navigationBar;
+
+  /// Custom app bar for the modal (Android design only).
+  final PreferredSizeWidget? appBar;
 
   const CountryPickerModal({
     super.key,
@@ -179,6 +191,9 @@ class CountryPickerModal extends StatefulWidget {
     this.searchFocusNode,
     this.searchBackgroundColor,
     this.searchEnabled,
+    this.navigationBar,
+    this.appBar,
+    this.hideNavigationBar = false,
   });
 
   @override
@@ -312,29 +327,35 @@ class CountryPickerModalState extends State<CountryPickerModal> {
 
     if (widget.useCupertinoModal) {
       return CupertinoPageScaffold(
-        navigationBar: CupertinoNavigationBar(
-          middle: Text(widget.title),
-          leading: widget.hideCloseIcon
-              ? null
-              : (widget.backButton ??
-                  CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    child: Text(widget.cancelText),
-                    onPressed: () => Navigator.of(context).pop(),
-                  )),
-        ),
+        navigationBar: widget.hideNavigationBar || widget.navigationBar == null
+            ? null
+            : (widget.navigationBar ??
+                CupertinoNavigationBar(
+                  middle: Text(widget.title),
+                  leading: widget.hideCloseIcon
+                      ? null
+                      : (widget.backButton ??
+                          CupertinoButton(
+                            padding: EdgeInsets.zero,
+                            child: Text(widget.cancelText),
+                            onPressed: () => Navigator.of(context).pop(),
+                          )),
+                )),
         child: SafeArea(
           child: modalContent,
         ),
       );
     } else {
       return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-          leading: widget.hideCloseIcon
-              ? null
-              : (widget.backButton ?? const BackButton()),
-        ),
+        appBar: widget.hideNavigationBar || widget.appBar == null
+            ? null
+            : (widget.appBar ??
+                AppBar(
+                  title: Text(widget.title),
+                  leading: widget.hideCloseIcon
+                      ? null
+                      : (widget.backButton ?? const BackButton()),
+                )),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: modalContent,

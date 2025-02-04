@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pick_country_picker/pick_country_picker.dart';
@@ -57,5 +58,65 @@ void main() {
 
     // Verify the modal is displayed
     expect(find.byType(CountryPickerModal), findsOneWidget);
+  });
+
+  testWidgets('should handle hideNavigationBar property correctly',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(MaterialApp(
+      home: CountryPickerModal(
+        onCountryChanged: (_) {},
+        hideNavigationBar: true,
+      ),
+    ));
+
+    // Should not find AppBar when hideNavigationBar is true
+    expect(find.byType(AppBar), findsNothing);
+  });
+
+  testWidgets('should handle custom appBar property correctly',
+      (WidgetTester tester) async {
+    const customTitle = 'Custom App Bar';
+    await tester.pumpWidget(MaterialApp(
+      home: CountryPickerModal(
+        onCountryChanged: (_) {},
+        appBar: AppBar(title: const Text(customTitle)),
+      ),
+    ));
+
+    // Should find custom AppBar title
+    expect(find.text(customTitle), findsOneWidget);
+  });
+
+  testWidgets('should handle custom navigationBar in Cupertino style',
+      (WidgetTester tester) async {
+    const customTitle = 'Custom Nav Bar';
+    await tester.pumpWidget(MaterialApp(
+      home: CountryPickerModal(
+        onCountryChanged: (_) {},
+        useCupertinoModal: true,
+        navigationBar: const CupertinoNavigationBar(
+          middle: Text(customTitle),
+        ),
+      ),
+    ));
+
+    // Should find custom navigation bar title
+    expect(find.text(customTitle), findsOneWidget);
+  });
+
+  testWidgets('should respect both hideNavigationBar and custom bars',
+      (WidgetTester tester) async {
+    const customTitle = 'Should Not Show';
+    await tester.pumpWidget(MaterialApp(
+      home: CountryPickerModal(
+        onCountryChanged: (_) {},
+        hideNavigationBar: true,
+        appBar: AppBar(title: const Text(customTitle)),
+      ),
+    ));
+
+    // Should not find AppBar or title when hideNavigationBar is true, even with custom appBar
+    expect(find.byType(AppBar), findsNothing);
+    expect(find.text(customTitle), findsNothing);
   });
 }
